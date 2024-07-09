@@ -117,3 +117,12 @@ app.get("/mokepon/:playerId/attacks", (req, res) => {
 app.listen(port, () => {
   console.log(`Server Working!👌🏽 port: ${port}`);
 });
+
+app.get("/restart", (req, res) => {
+  // Limpia o reinicia el estado del juego aquí
+  players.length = 0; // Esto reinicia la lista de jugadores
+  // Asegúrate de reiniciar cualquier otro estado relevante del juego aquí
+
+  res.send("Juego reiniciado");
+});
+

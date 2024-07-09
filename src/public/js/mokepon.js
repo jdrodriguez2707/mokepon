@@ -541,10 +541,7 @@ function attackSequence() {
       playerAttacks.push(attackName);
       attackButton.style.background = "#1e3b64";
       attackButton.disabled = true;
-
-      if (playerAttacks.length === 5) {
-        sendAttacks();
-      }
+      sendAttacks();
     });
   });
 }
@@ -597,8 +594,8 @@ function getEnemyAttacks() {
   ) {
     if (res.ok) {
       res.json().then(function ({ attacks }) {
-        if (attacks.length === 5) {
-          enemyAttacks = attacks;
+        enemyAttacks = attacks;
+        if (enemyAttacks.length === playerAttacks.length) {
           combat();
         }
       });
@@ -611,46 +608,47 @@ function getEnemyAttacks() {
 function combat() {
   clearInterval(interval);
 
-  for (
-    let attackNumber = 0;
-    attackNumber < playerAttacks.length;
-    attackNumber++
+  if (playerAttacks[playerAttacks.length - 1] === enemyAttacks[enemyAttacks.length - 1]) {
+    saveCombatAttacks(playerAttacks.length - 1); // save the number of the attack chosen in an array
+    createMessage('ES UN EMPATE🤝🏼');
+  } else if (
+    (playerAttacks[playerAttacks.length - 1] === "💧" &&
+      enemyAttacks[enemyAttacks.length - 1] === "🔥") ||
+    (playerAttacks[playerAttacks.length - 1] === "🔥" &&
+      enemyAttacks[enemyAttacks.length - 1] === "🌱") ||
+    (playerAttacks[playerAttacks.length - 1] === "🌱" &&
+      enemyAttacks[enemyAttacks.length - 1] === "💧")
   ) {
-    if (playerAttacks[attackNumber] === enemyAttacks[attackNumber]) {
-      saveCombatAttacks(attackNumber); // save the number of the attack chosen in an array
-      createMessage(/* 'ES UN EMPATE🤝🏼' */);
-    } else if (
-      (playerAttacks[attackNumber] === "💧" &&
-        enemyAttacks[attackNumber] === "🔥") ||
-      (playerAttacks[attackNumber] === "🔥" &&
-        enemyAttacks[attackNumber] === "🌱") ||
-      (playerAttacks[attackNumber] === "🌱" &&
-        enemyAttacks[attackNumber] === "💧")
-    ) {
-      saveCombatAttacks(attackNumber);
-      createMessage(/* 'GANASTE🥳' */);
-      playerWins++;
-    } else {
-      saveCombatAttacks(attackNumber);
-      createMessage(/* 'PERDISTE☹️' */);
-      enemyWins++;
-    }
+    saveCombatAttacks(playerAttacks.length - 1);
+    createMessage('GANASTE🥳');
+    playerWins++;
+  } else {
+    saveCombatAttacks(enemyAttacks.length - 1);
+    createMessage('PERDISTE☹️');
+    enemyWins++;
   }
+  
 
   // show wins
   showPlayerWins.innerHTML = `🏆${playerWins}`;
   showEnemyWins.innerHTML = `🏆${enemyWins}`;
 
-  checkWins(); // check who won
+  if (
+    playerAttacks.length === 5 && enemyAttacks.length === 5 ||
+    playerWins > 2 || enemyWins > 2
+  ) {
+    checkWins(); // check who won
+  }
 }
 
 function saveCombatAttacks(attackNumber) {
   // save the chosen attack to display it on the screen
   showPlayerAttack = playerAttacks[attackNumber];
   showEnemyAttack = enemyAttacks[attackNumber];
+  console.log(showPlayerAttack, showEnemyAttack);
 }
 
-function createMessage(/* message */) {
+function createMessage(message) {
   // create messages (attack sequence)
   let newPlayerAttack = document.createElement("span");
   let newEnemyAttack = document.createElement("span");
@@ -662,7 +660,7 @@ function createMessage(/* message */) {
   showEnemyAttackSection.appendChild(newEnemyAttack);
 
   // show combat results
-  // result.innerHTML = message;
+  result.innerHTML = message;
 }
 
 function checkWins() {
@@ -683,5 +681,12 @@ function checkWins() {
 
 // RESTART GAME
 function restartGame() {
-  location.reload();
+  fetch("http://localhost:3000/restart")
+    .then(response => response.text())
+    .then(data => {
+      console.log(data);
+      // Aquí puedes agregar cualquier lógica adicional que necesites ejecutar después de reiniciar el juego
+      location.reload();
+    })
+    .catch(error => console.error("Error al reiniciar el juego:", error));
 }

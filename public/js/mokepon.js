@@ -203,7 +203,7 @@ restartButton.addEventListener("click", restartGame);
 // JOIN THE GAME
 
 // Get player id from backend
-fetch(`http://localhost:3000/join`).then(function (res) {
+fetch("/join").then(function (res) {
   if (res.ok) {
     res.text().then(function (response) {
       // console.log('ID:', response);
@@ -238,7 +238,7 @@ function selectPetPlayer() {
 
 function selectMokepon(playerPetName) {
   // send player pet name to backend
-  fetch(`http://localhost:3000/mokepon/${playerId}`, {
+  fetch(`/mokepon/${playerId}`, {
     method: "POST",
     body: JSON.stringify({ mokepon: playerPetName }),
     headers: {
@@ -383,7 +383,7 @@ function setSpeed(maxSpeed) {
 }
 
 function sendPosition(x, y) {
-  fetch(`http://localhost:3000/mokepon/${playerId}/position`, {
+  fetch(`/mokepon/${playerId}/position`, {
     method: "POST",
     body: JSON.stringify({ x, y }),
     headers: {
@@ -539,7 +539,7 @@ function sendAttacks() {
   });
 
   // send attacks to backend
-  fetch(`http://localhost:3000/mokepon/${playerId}/attacks`, {
+  fetch(`/mokepon/${playerId}/attacks`, {
     method: "POST",
     body: JSON.stringify({ attacks: playerAttacks }),
     headers: {
@@ -554,7 +554,7 @@ function sendAttacks() {
 
 function getEnemyAttacks() {
   // get attacks from the other player
-  fetch(`http://localhost:3000/mokepon/${enemyId}/attacks`).then(function (
+  fetch(`/mokepon/${enemyId}/attacks`).then(function (
     res
   ) {
     if (res.ok) {

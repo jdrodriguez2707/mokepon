@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mokepón🔥💧🌱</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"
+    />
+  </head>
+  <body>
+    <!-- CHOOSE PET SECTION -->
+    <section id="choose-pet-section">
+      <h1 class="title">MOKEPÓN🔥💧🌱</h1>
+      <h2 class="subtitle">Elige tu mascota</h2>
+
+      <div id="mokepon-cards" class="cards"></div>
+
+      <button id="btn-select-pet">Jugar</button>
+    </section>
+
+    <!-- MAP SECTION -->
+    <section id="map-section">
+      <h1 class="title">Recorre el mapa con tu mokepón</h1>
+
+      <canvas id="map"></canvas>
+
+      <div class="movement-buttons-section">
+        <div>
+          <button class="btn-move" id="left">
+            <i class="ti ti-square-rounded-arrow-left-filled"></i>
+          </button>
+        </div>
+
+        <div>
+          <button class="btn-move" id="up">
+            <i class="ti ti-square-rounded-arrow-up-filled"></i>
+          </button>
+
+          <button class="btn-move" id="down">
+            <i class="ti ti-square-rounded-arrow-down-filled"></i>
+          </button>
+        </div>
+
+        <div>
+          <button class="btn-move" id="right">
+            <i class="ti ti-square-rounded-arrow-right-filled"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHOOSE ATTACK SECTION -->
+    <section id="choose-attack-section">
+      <h1 class="title">MOKEPÓN🔥💧🌱</h1>
+      <h2 class="subtitle" id="subtitle">Elige tu ataque</h2>
+
+      <div class="attack-buttons-section" id="attack-buttons-section"></div>
+
+      <div id="messages-section">
+        <h4 id="result">¡Buena suerte!👍🏼</h4>
+        <button id="btn-restart">Volver a jugar</button>
+      </div>
+
+      <div class="game-info-section">
+        <div class="player-info">
+          <span id="player-wins">🏆0</span>
+          <span id="player-pet"></span>
+          <div id="player-attack-section"></div>
+        </div>
+
+        <div class="enemy-info">
+          <span id="enemy-wins">🏆0</span>
+          <span id="enemy-pet"></span>
+          <div id="enemy-attack-section"></div>
+        </div>
+      </div>
+    </section>
+
+    <script src="./js/mokepon.js"></script>
+  </body>
+</html>

@@ -1,0 +1,309 @@
+/* Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@300&display=swap");
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  color: white;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background-color: #041562;
+}
+
+#choose-pet-section,
+#choose-attack-section,
+#map-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.title {
+  font-family: "Fredoka One", cursive;
+  font-size: 80px;
+  margin-bottom: 36px;
+  text-align: center;
+}
+
+.subtitle {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.cards,
+.attack-buttons-section {
+  display: flex;
+  gap: 20px;
+}
+
+input {
+  display: none;
+}
+
+.mokepon-card {
+  width: 268px;
+  height: 400px;
+  background: #11468f;
+  border-radius: 20px;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 20px;
+}
+
+.mokepon-card img {
+  width: 268px;
+}
+
+.mokepon-card:hover,
+#btn-select-pet:hover,
+.btn-attack:hover,
+#btn-restart:hover {
+  cursor: pointer;
+}
+
+input:checked + label {
+  border: 2px solid white;
+}
+
+#btn-select-pet {
+  width: 160px;
+  height: 48px;
+  background: transparent;
+  border-radius: 20px;
+  border: 2px solid white;
+  margin-top: 30px;
+  font-size: 20px;
+}
+
+#btn-select-pet:active {
+  background: #11468f;
+}
+
+#map {
+  box-shadow: 2px 4px 10px black;
+}
+
+.movement-buttons-section {
+  display: grid;
+  grid-template-columns: 200px 200px 200px;
+  align-items: center;
+  justify-items: center;
+}
+
+.movement-buttons-section div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-move {
+  margin-top: 40px;
+  width: 160px;
+  height: 48px;
+  background-color: transparent;
+  border: 2px solid white;
+  border-radius: 20px;
+  font-size: 20px;
+}
+
+#left {
+  content: "f6dc";
+}
+
+#up {
+  content: "f6de";
+}
+
+#down {
+  content: "f6db";
+}
+
+#right {
+  content: "f6dd";
+}
+
+.btn-attack {
+  width: 132px;
+  height: 80px;
+  background: transparent;
+  border-radius: 20px;
+  border-color: #11468f;
+  font-size: 28px;
+}
+
+#messages-section {
+  width: 340px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  font-size: 20px;
+  padding: 20px;
+}
+
+#btn-restart {
+  background: transparent;
+  width: 180px;
+  height: 52px;
+  border-radius: 20px;
+  border-color: white;
+  margin-top: 20px;
+  font-size: 20px;
+}
+
+.game-info-section {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: 136px 136px;
+  gap: 48px;
+  margin-bottom: 20px;
+}
+
+.player-info,
+.enemy-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+#player-wins,
+#enemy-wins {
+  font-size: 32px;
+}
+
+#player-pet,
+#enemy-pet {
+  text-decoration: underline;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+#player-attack-section,
+#enemy-attack-section {
+  display: flex;
+  flex-direction: column;
+  font-size: 28px;
+}
+
+/* Responsive Design */
+
+/* small screens or laptops */
+@media (max-width: 1800px) {
+  .title {
+    font-size: 56px;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 289px 289px 289px;
+  }
+
+  .mokepon-card {
+    flex-direction: row;
+    width: 268px;
+    height: 108px;
+    font-size: 16px;
+  }
+
+  .mokepon-card img {
+    width: 104px;
+  }
+
+  #choose-pet-section,
+  #choose-attack-section {
+    margin-bottom: 24px;
+  }
+}
+
+/* tablets and phones */
+@media (max-width: 980px) {
+  .title {
+    font-size: 36px;
+  }
+
+  .subtitle {
+    font-size: 24px;
+  }
+
+  #choose-pet-section,
+  #choose-attack-section {
+    margin-bottom: 40px;
+  }
+
+  .cards {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mokepon-card {
+    width: 256px;
+    height: 96px;
+    flex-direction: row;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .mokepon-card img {
+    width: 88px;
+  }
+
+  .attack-buttons-section {
+    display: grid;
+    grid-template-columns: 84px 84px;
+    justify-items: center;
+  }
+
+  .btn-attack {
+    width: 76px;
+    height: 36px;
+    font-size: 20px;
+  }
+
+  #player-pet,
+  #enemy-pet {
+    font-size: 20px;
+  }
+
+  #player-wins,
+  #enemy-wins {
+    font-size: 24px;
+  }
+
+  #player-attack-section,
+  #enemy-attack-section {
+    font-size: 24px;
+  }
+
+  #messages-section {
+    width: 304px;
+    font-size: 16px;
+  }
+
+  #btn-restart {
+    width: 160px;
+    height: 44px;
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 620px) {
+  .btn-move {
+    width: 116px;
+    font-size: 16px;
+  }
+
+  .movement-buttons-section {
+    grid-template-columns: 120px 120px 120px;
+  }
+}

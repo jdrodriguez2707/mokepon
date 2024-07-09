@@ -1,6 +1,3 @@
-/* Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@300&display=swap");
-
 * {
   box-sizing: border-box;
   margin: 0;
@@ -16,10 +13,18 @@ body {
 #choose-pet-section,
 #choose-attack-section,
 #map-section {
-  display: flex;
   flex-direction: column;
   align-items: center;
   margin-top: 40px;
+}
+
+#choose-pet-section {
+  display: flex;
+}
+
+#choose-attack-section,
+#map-section {
+  display: none;
 }
 
 .title {
@@ -149,6 +154,11 @@ input:checked + label {
   margin-top: 30px;
   font-size: 20px;
   padding: 20px;
+  text-align: center;
+}
+
+#waiting-message {
+  display: none;
 }
 
 #btn-restart {

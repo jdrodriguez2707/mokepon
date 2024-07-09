@@ -2,6 +2,8 @@
 
 import express, { json, static as expressStatic } from "express";
 import cors from "cors";
+import { Server } from "socket.io";
+import http from "http";
 
 // CREATE WEB SERVER
 
@@ -14,7 +16,16 @@ app.use(cors());
 app.use(json()); 
 
 // serve static files so that any user can access files inside that folder (public).
-app.use(expressStatic("./src/public"));
+app.use(expressStatic("public"));
+
+
+// SOCKET.IO
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 // PLAYER INFORMATION
 
@@ -90,7 +101,6 @@ app.post("/mokepon/:playerId/position", (req, res) => {
 app.post("/mokepon/:playerId/attacks", (req, res) => {
   const playerId = req.params.playerId || "";
   const attacks = req.body.attacks || [];
-
   const playerIndex = players.findIndex((player) => playerId === player.id);
 
   if (playerIndex >= 0) {
@@ -114,15 +124,34 @@ app.get("/mokepon/:playerId/attacks", (req, res) => {
 
 // START SERVER
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Server Working!👌🏽 port: ${port}`);
 });
 
-app.get("/restart", (req, res) => {
-  // Limpia o reinicia el estado del juego aquí
-  players.length = 0; // Esto reinicia la lista de jugadores
-  // Asegúrate de reiniciar cualquier otro estado relevante del juego aquí
+// RESTART GAME
 
-  res.send("Juego reiniciado");
+io.on("connection", (socket) => {
+  console.log("Nuevo cliente conectado", socket.id);
+
+  socket.on("restart", () => {
+    // Restart the list of players
+    players.length = 0; 
+
+    // Notify all clients that the game has been restarted
+    io.emit("game_restarted"); 
+  });
+
+  socket.on("player_reloading", (data) => {
+    const { playerId } = data;
+
+    const playerIndex = players.findIndex((player) => playerId === player.id);
+    if (playerIndex >= 0) {
+      players.splice(playerIndex, 1);
+    }
+
+    socket.broadcast.emit("player_reloaded", { playerId });
+  })
 });
+
+
 

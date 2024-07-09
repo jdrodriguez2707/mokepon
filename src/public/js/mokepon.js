@@ -1,4 +1,4 @@
-// MOKEPON GAME
+// MOKEPON GAME 
 
 // GET SECTIONS
 
@@ -95,7 +95,8 @@ class Mokepon {
     this.x =
       random(1, Math.floor(map.width / this.width)) * this.width - this.width;
     this.y =
-      random(1, Math.floor(map.height / this.height)) * this.height - this.height;
+      random(1, Math.floor(map.height / this.height)) * this.height -
+      this.height;
 
     this.speedX = 0;
     this.speedY = 0;
@@ -171,24 +172,7 @@ ratigueya.attacks.push(...ratigueyaAttacks);
 // add mokepons to global array
 mokepons.push(hipodoge, capipepo, ratigueya);
 
-// mokepons for the enemy (cpu)
-// let hipodogeEnemy = new Mokepon('hipodoge', 'Hipodoge', './assets/mokepons_mokepon_hipodoge_attack.png', '💧', './assets/hipodoge.png');
-
-// let capipepoEnemy = new Mokepon('capipepo', 'Capipepo', './assets/mokepons_mokepon_capipepo_attack.png', '🌱', './assets/capipepo.png');
-
-// let ratigueyaEnemy = new Mokepon('ratigueya', 'Ratigueya', './assets/mokepons_mokepon_ratigueya_attack.png', '🔥', './assets/ratigueya.png');
-
-// add attacks
-// hipodogeEnemy.attacks.push(...hipodogeAttacks);
-// capipepoEnemy.attacks.push(...capipepoAttacks);
-// ratigueyaEnemy.attacks.push(...ratigueyaAttacks);
-
-// add enemy's mokepons to global array
-// enemyMokepons.push(hipodogeEnemy, capipepoEnemy, ratigueyaEnemy);
-
 // START GAME
-mapSection.style.display = "none";
-chooseAttackSection.style.display = "none";
 
 // Loop through the mokepon array and generate the HTML structure
 mokepons.forEach((mokepon) => {
@@ -219,7 +203,7 @@ restartButton.addEventListener("click", restartGame);
 // JOIN THE GAME
 
 // Get player id from backend
-fetch("http://localhost:3000/join").then(function (res) {
+fetch(`http://localhost:3000/join`).then(function (res) {
   if (res.ok) {
     res.text().then(function (response) {
       // console.log('ID:', response);
@@ -300,7 +284,7 @@ function getPetObject(playerPetName) {
 
 // Create map background
 let background = new Image();
-background.src = "./assets/mokemap.png";
+background.src = "../assets/mokemap.png";
 
 function paintMap() {
   canvas.clearRect(0, 0, map.width, map.height); // clear canvas (100%)
@@ -315,11 +299,11 @@ function paintMap() {
 
   sendPosition(playerPetObject.x, playerPetObject.y); // send mokepon position to backend
 
+  checkMapBoundaries();
+
   enemyMokepons.forEach(function (enemyMokepon) {
     if (enemyMokepon) {
       enemyMokepon.paintMokepon();
-
-      checkMapBoundaries();
       checkCollision(enemyMokepon);
     }
   });
@@ -537,16 +521,23 @@ function attackSequence() {
   attackButtons.forEach((attackButton) => {
     // get click event info
     attackButton.addEventListener("click", (e) => {
+      attackButton.style.borderColor = "#fff";
+      attackButton.classList.add("clicked");
       let attackName = e.target.textContent; // get attack name (attack button text content)
       playerAttacks.push(attackName);
-      attackButton.style.background = "#1e3b64";
-      attackButton.disabled = true;
       sendAttacks();
     });
   });
 }
 
 function sendAttacks() {
+  // disable all attack buttons
+  attackButtons.forEach((attackButton) => {
+    attackButton.style.background = "#122642";
+    attackButton.disabled = true;
+    attackButton.style.cursor = "default";
+  });
+
   // send attacks to backend
   fetch(`http://localhost:3000/mokepon/${playerId}/attacks`, {
     method: "POST",
@@ -558,32 +549,6 @@ function sendAttacks() {
 
   interval = setInterval(getEnemyAttacks, 50); // continually request the other player's attacks
 }
-
-// ENEMY ATTACKS (cpu)
-
-// function randomEnemyAttacks() {
-//   let enemyPetAttacks = collidedEnemyPet.attacks;
-
-//   // add an extra attack if the enemy's pet is more powerful than the player's pet
-//   if (enemyAttacks.length < 1) { // this condition is to prevent him from adding another extra attack
-//     if ((playerPetType == '🔥' && enemyPetType == '💧') || (playerPetType == '🌱' && enemyPetType == '🔥') || (playerPetType == '💧' && enemyPetType == '🌱')) {
-//       enemyPetAttacks.push(
-//         { name: enemyPetType, id: enemyAttackButtonId }
-//       );
-//     }
-//   }
-
-//   let randomAttackNumber = random(0, enemyPetAttacks.length - 1);
-//   enemyAttacks.push(enemyPetAttacks[randomAttackNumber].name);
-
-//   // delete the selected attack to prevent it from being selected again
-//   enemyPetAttacks.splice(randomAttackNumber, 1);
-
-//   // Start combat
-//   if (enemyAttacks.length === 5) {
-//     combat();
-//   }
-// }
 
 // ENEMY ATTACKS (player)
 
@@ -608,9 +573,12 @@ function getEnemyAttacks() {
 function combat() {
   clearInterval(interval);
 
-  if (playerAttacks[playerAttacks.length - 1] === enemyAttacks[enemyAttacks.length - 1]) {
+  if (
+    playerAttacks[playerAttacks.length - 1] ===
+    enemyAttacks[enemyAttacks.length - 1]
+  ) {
     saveCombatAttacks(playerAttacks.length - 1); // save the number of the attack chosen in an array
-    createMessage('ES UN EMPATE🤝🏼');
+    createMessage("ES UN EMPATE🤝🏼");
   } else if (
     (playerAttacks[playerAttacks.length - 1] === "💧" &&
       enemyAttacks[enemyAttacks.length - 1] === "🔥") ||
@@ -620,22 +588,32 @@ function combat() {
       enemyAttacks[enemyAttacks.length - 1] === "💧")
   ) {
     saveCombatAttacks(playerAttacks.length - 1);
-    createMessage('GANASTE🥳');
+    createMessage("GANASTE🥳");
     playerWins++;
   } else {
     saveCombatAttacks(enemyAttacks.length - 1);
-    createMessage('PERDISTE☹️');
+    createMessage("PERDISTE☹️");
     enemyWins++;
   }
-  
 
   // show wins
   showPlayerWins.innerHTML = `🏆${playerWins}`;
   showEnemyWins.innerHTML = `🏆${enemyWins}`;
 
+  // active all attack buttons
+  attackButtons.forEach((attackButton) => {
+    if (!attackButton.classList.contains("clicked")) {
+      attackButton.style.background = "#041562";
+      attackButton.disabled = false;
+      attackButton.style.cursor = "pointer";
+    }
+    attackButton.style.borderColor = "#11468f";
+  });
+
   if (
-    playerAttacks.length === 5 && enemyAttacks.length === 5 ||
-    playerWins > 2 || enemyWins > 2
+    (playerAttacks.length === 5 && enemyAttacks.length === 5) ||
+    playerWins > 2 ||
+    enemyWins > 2
   ) {
     checkWins(); // check who won
   }
@@ -680,13 +658,21 @@ function checkWins() {
 }
 
 // RESTART GAME
+
+/* global io */
+const socket = io();
+
 function restartGame() {
-  fetch("http://localhost:3000/restart")
-    .then(response => response.text())
-    .then(data => {
-      console.log(data);
-      // Aquí puedes agregar cualquier lógica adicional que necesites ejecutar después de reiniciar el juego
-      location.reload();
-    })
-    .catch(error => console.error("Error al reiniciar el juego:", error));
+  // Send message to backend to restart the game
+  socket.emit("restart");
 }
+
+socket.on("game_restarted", () => {
+  // Reload the page to restart the game
+  location.reload();
+});
+
+window.addEventListener("beforeunload", () => {
+  // Send message to backend when the player reloads the page
+  socket.emit("player_reloading", { playerId: playerId });
+});

@@ -1,6 +1,6 @@
 // MOKEPON GAME
 
-const prodURL = "https://limitless-wildwood-04768-d112f658dcd5.herokuapp.com";
+const prodURL = "https://limitless-wildwood-bab2ac7753f1.herokuapp.com";
 
 // GET SECTIONS
 
@@ -9,6 +9,7 @@ const choosePetSection = document.getElementById("choose-pet-section");
 const subtitle = document.getElementById("subtitle");
 const mokeponCardsSection = document.getElementById("mokepon-cards");
 const choosePetButton = document.getElementById("btn-select-pet");
+const instructions = document.getElementById("instructions");
 
 // Get map section
 const mapSection = document.getElementById("map-section");
@@ -200,6 +201,7 @@ const showNameRatigueya = document.getElementById(ratigueya.name);
 mokeponNames.push(showNameHipodoge, showNameCapipepo, showNameRatigueya);
 
 choosePetButton.addEventListener("click", selectPetPlayer);
+instructions.addEventListener("click", showInstructions);
 restartButton.addEventListener("click", restartGame);
 
 // JOIN THE GAME
@@ -246,6 +248,16 @@ function selectMokepon(playerPetName) {
     headers: {
       "Content-Type": "application/json",
     },
+  });
+}
+
+// Create a function to show the instructions in a dialog in HTML
+function showInstructions() {
+  const instructionsDialog = document.getElementById("instructions-dialog");
+  instructionsDialog.style.display = "flex";
+  const closeInstructions = document.getElementById("close-instructions");
+  closeInstructions.addEventListener("click", () => {
+    instructionsDialog.style.display = "none"
   });
 }
 

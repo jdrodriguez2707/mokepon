@@ -23,7 +23,7 @@ app.use(expressStatic("public"));
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://limitless-wildwood-04768-d112f658dcd5.herokuapp.com/",
+    origin: "https://limitless-wildwood-bab2ac7753f1.herokuapp.com",
   },
 });
 

@@ -23,13 +23,14 @@ app.use(expressStatic("public"));
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: "https://limitless-wildwood-04768-d112f658dcd5.herokuapp.com/",
   },
 });
 
 // PLAYER INFORMATION
 
 const players = [];
+const clients = {};
 
 class Player {
   constructor(id) {
@@ -55,6 +56,38 @@ class Mokepon {
     this.name = name;
   }
 }
+
+// SOCKET.IO HANDLERS
+
+io.on("connection", (socket) => {
+  console.log("Nuevo cliente conectado", socket.id);
+  clients[socket.id] = socket;
+
+  socket.on("restart", () => {
+    // Restart the list of players
+    players.length = 0; 
+
+    // Notify all clients that the game has been restarted
+    io.emit("game_restarted"); 
+  });
+
+  socket.on("player_reloading", (data) => {
+    const { playerId } = data;
+
+    const playerIndex = players.findIndex((player) => playerId === player.id);
+    if (playerIndex >= 0) {
+      players.splice(playerIndex, 1);
+    }
+
+    socket.broadcast.emit("player_reloaded", { playerId });
+  });
+
+  // Handle client disconnection
+  socket.on("disconnect", () => {
+    console.log("Cliente desconectado", socket.id);
+    delete clients[socket.id];
+  });
+});
 
 // ENDPOINTS
 
@@ -128,30 +161,8 @@ server.listen(port, () => {
   console.log(`Server Working!👌🏽 port: ${port}`);
 });
 
-// RESTART GAME
 
-io.on("connection", (socket) => {
-  console.log("Nuevo cliente conectado", socket.id);
 
-  socket.on("restart", () => {
-    // Restart the list of players
-    players.length = 0; 
-
-    // Notify all clients that the game has been restarted
-    io.emit("game_restarted"); 
-  });
-
-  socket.on("player_reloading", (data) => {
-    const { playerId } = data;
-
-    const playerIndex = players.findIndex((player) => playerId === player.id);
-    if (playerIndex >= 0) {
-      players.splice(playerIndex, 1);
-    }
-
-    socket.broadcast.emit("player_reloaded", { playerId });
-  })
-});
 
 
 

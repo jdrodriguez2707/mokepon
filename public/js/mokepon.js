@@ -1,4 +1,6 @@
-// MOKEPON GAME 
+// MOKEPON GAME
+
+const prodURL = "https://limitless-wildwood-04768-d112f658dcd5.herokuapp.com";
 
 // GET SECTIONS
 
@@ -203,7 +205,7 @@ restartButton.addEventListener("click", restartGame);
 // JOIN THE GAME
 
 // Get player id from backend
-fetch("/join").then(function (res) {
+fetch(`${prodURL}/join`).then(function (res) {
   if (res.ok) {
     res.text().then(function (response) {
       // console.log('ID:', response);
@@ -238,7 +240,7 @@ function selectPetPlayer() {
 
 function selectMokepon(playerPetName) {
   // send player pet name to backend
-  fetch(`/mokepon/${playerId}`, {
+  fetch(`${prodURL}/mokepon/${playerId}`, {
     method: "POST",
     body: JSON.stringify({ mokepon: playerPetName }),
     headers: {
@@ -383,7 +385,7 @@ function setSpeed(maxSpeed) {
 }
 
 function sendPosition(x, y) {
-  fetch(`/mokepon/${playerId}/position`, {
+  fetch(`${prodURL}/mokepon/${playerId}/position`, {
     method: "POST",
     body: JSON.stringify({ x, y }),
     headers: {
@@ -493,6 +495,7 @@ function checkCollision(enemy) {
 
   stopMovement();
   clearInterval(interval); // stop painting the map
+  interval = null;
 
   enemyId = enemy.id;
 
@@ -531,61 +534,82 @@ function attackSequence() {
 }
 
 function sendAttacks() {
-  // disable all attack buttons
+  // Deshabilitar todos los botones de ataque
   attackButtons.forEach((attackButton) => {
     attackButton.style.background = "#122642";
     attackButton.disabled = true;
     attackButton.style.cursor = "default";
   });
 
-  // send attacks to backend
-  fetch(`/mokepon/${playerId}/attacks`, {
+  // Enviar ataques al backend
+  fetch(`${prodURL}/mokepon/${playerId}/attacks`, {
     method: "POST",
     body: JSON.stringify({ attacks: playerAttacks }),
     headers: {
       "Content-Type": "application/json",
     },
-  });
-
-  interval = setInterval(getEnemyAttacks, 50); // continually request the other player's attacks
+  })
+    .then(() => {
+      // Establecer intervalo para obtener los ataques del enemigo si no está configurado
+      if (!interval) {
+        console.log("Esperando ataque del enemigo");
+        interval = setInterval(getEnemyAttacks, 50);
+      }
+    })
+    .catch((error) => {
+      console.error("Error al enviar ataques:", error);
+      // Manejar errores aquí según sea necesario
+    });
 }
 
 // ENEMY ATTACKS (player)
 
 function getEnemyAttacks() {
-  // get attacks from the other player
-  fetch(`/mokepon/${enemyId}/attacks`).then(function (
-    res
-  ) {
-    if (res.ok) {
-      res.json().then(function ({ attacks }) {
-        enemyAttacks = attacks;
-        if (enemyAttacks.length === playerAttacks.length) {
-          combat();
-        }
-      });
-    }
-  });
+  // Limpiar intervalo anterior si existe
+  clearInterval(interval);
+  interval = null;
+
+  // Obtener los ataques del enemigo desde el servidor
+  fetch(`${prodURL}/mokepon/${enemyId}/attacks`)
+    .then((res) => {
+      if (res.ok) {
+        return res.json();
+      } else {
+        throw new Error("Error al obtener los ataques del enemigo");
+      }
+    })
+    .then(({ attacks }) => {
+      enemyAttacks = attacks;
+
+      // Verificar si ambos jugadores han atacado
+      if (enemyAttacks.length === playerAttacks.length) {
+        console.log("Ambos jugadores han atacado");
+        combat();
+      } else {
+        // Establecer el intervalo nuevamente si es necesario
+        interval = setInterval(getEnemyAttacks, 50);
+      }
+    })
+    .catch((error) => {
+      console.error("Error:", error);
+      // Manejar errores aquí según sea necesario
+    });
 }
 
 // COMBAT AND MESSAGES
 
 function combat() {
-  clearInterval(interval);
+  // Comprobar quién ganó el round
+  let playerAttack = playerAttacks[playerAttacks.length - 1];
+  let enemyAttack = enemyAttacks[enemyAttacks.length - 1];
 
-  if (
-    playerAttacks[playerAttacks.length - 1] ===
-    enemyAttacks[enemyAttacks.length - 1]
-  ) {
-    saveCombatAttacks(playerAttacks.length - 1); // save the number of the attack chosen in an array
+  if (playerAttack === enemyAttack) {
+    saveCombatAttacks(playerAttacks.length - 1);
     createMessage("ES UN EMPATE🤝🏼");
   } else if (
-    (playerAttacks[playerAttacks.length - 1] === "💧" &&
-      enemyAttacks[enemyAttacks.length - 1] === "🔥") ||
-    (playerAttacks[playerAttacks.length - 1] === "🔥" &&
-      enemyAttacks[enemyAttacks.length - 1] === "🌱") ||
-    (playerAttacks[playerAttacks.length - 1] === "🌱" &&
-      enemyAttacks[enemyAttacks.length - 1] === "💧")
+    (playerAttack === "💧" && enemyAttack === "🔥") ||
+    (playerAttack === "🔥" && enemyAttack === "🌱") ||
+    (playerAttack === "🌱" && enemyAttack === "💧")
   ) {
     saveCombatAttacks(playerAttacks.length - 1);
     createMessage("GANASTE🥳");
@@ -596,11 +620,11 @@ function combat() {
     enemyWins++;
   }
 
-  // show wins
+  // Mostrar victorias
   showPlayerWins.innerHTML = `🏆${playerWins}`;
   showEnemyWins.innerHTML = `🏆${enemyWins}`;
 
-  // active all attack buttons
+  // Habilitar todos los botones de ataque nuevamente
   attackButtons.forEach((attackButton) => {
     if (!attackButton.classList.contains("clicked")) {
       attackButton.style.background = "#041562";
@@ -610,12 +634,13 @@ function combat() {
     attackButton.style.borderColor = "#11468f";
   });
 
+  // Verificar condiciones de finalización del juego
   if (
     (playerAttacks.length === 5 && enemyAttacks.length === 5) ||
     playerWins > 2 ||
     enemyWins > 2
   ) {
-    checkWins(); // check who won
+    checkWins(); // Función para determinar al ganador del juego
   }
 }
 

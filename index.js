@@ -4,10 +4,6 @@ import express, { json, static as expressStatic } from "express";
 import cors from "cors";
 import { Server } from "socket.io";
 import http from "http";
-import path from "path";
-import { fileURLToPath } from 'url';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // CREATE WEB SERVER
 
@@ -20,17 +16,14 @@ app.use(cors());
 app.use(json());
 
 // serve static files so that any user can access files inside that folder (public).
-app.use(expressStatic(path.join(__dirname, "public")));
+app.use(expressStatic("public"));
 
-// app.get("/", (req, res) => {
-//   res.sendFile(path.join(__dirname, "public", "index.html"));
-// });
 
 // SOCKET.IO
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://mokepon-gold.vercel.app/", 
+    origin: "*",
   },
 });
 
@@ -142,10 +135,10 @@ io.on("connection", (socket) => {
 
   socket.on("restart", () => {
     // Restart the list of players
-    players.length = 0;
+    players.length = 0; 
 
     // Notify all clients that the game has been restarted
-    io.emit("game_restarted");
+    io.emit("game_restarted"); 
   });
 
   socket.on("player_reloading", (data) => {
@@ -157,5 +150,8 @@ io.on("connection", (socket) => {
     }
 
     socket.broadcast.emit("player_reloaded", { playerId });
-  });
+  })
 });
+
+
+

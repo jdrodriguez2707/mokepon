@@ -1,6 +1,6 @@
 // MOKEPON GAME
 
-const prodURL = "https://limitless-wildwood-bab2ac7753f1.herokuapp.com";
+const prodURL = "https://mokepon-game-b4e70377818e.herokuapp.com/";
 
 // GET SECTIONS
 

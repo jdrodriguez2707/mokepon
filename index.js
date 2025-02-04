@@ -23,7 +23,7 @@ app.use(expressStatic("public"));
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://mokepon-game-b4e70377818e.herokuapp.com/",
+    origin: "https://mokepon-game-b4e70377818e.herokuapp.com",
   },
 });
 

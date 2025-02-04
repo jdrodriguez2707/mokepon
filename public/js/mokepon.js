@@ -1,6 +1,6 @@
 // MOKEPON GAME
 
-const prodURL = "https://mokepon-game-b4e70377818e.herokuapp.com/";
+const prodURL = "https://mokepon-game-b4e70377818e.herokuapp.com";
 
 // GET SECTIONS
 
